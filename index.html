@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10264a">
+<meta name="description" content="LOANARK loan enquiry portal prototype">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>LOANARK | Loan Enquiry</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f7;font-family:Arial,sans-serif;color:#17243b}
+header{background:#10264a;color:white;padding:25px 20px;border-radius:0 0 24px 24px}
+.brand{font-size:27px;font-weight:800;letter-spacing:2px}header p{color:#c9d5e8;font-size:13px}
+main{max-width:520px;margin:auto;padding:18px}.card{background:white;border-radius:16px;padding:20px;margin:14px 0;box-shadow:0 4px 16px #15294c12}
+h2{font-size:18px;margin-top:0}label{display:block;font-size:13px;font-weight:bold;margin:15px 0 7px}
+input,select{width:100%;padding:13px;border:1px solid #d5dce7;border-radius:9px;font-size:15px;background:white}
+button,.whatsapp{display:block;width:100%;padding:15px;border:0;border-radius:10px;background:#174b91;color:white;font-weight:bold;font-size:15px;margin-top:16px;text-align:center;text-decoration:none}
+.secondary{background:#e9eff8;color:#174b91}.amount{font-size:27px;font-weight:bold;color:#174b91}
+.note{font-size:12px;color:#68758a;line-height:1.5}.fee{background:#fff8e8;border:1px solid #f2d99a;padding:14px;border-radius:10px}
+.whatsapp{background:#16834b}footer{text-align:center;color:#758197;font-size:11px;padding:20px}
+</style>
+</head>
+<body>
+<header><div class="brand">LOANARK</div><p>Loan Application & Evaluation Enquiry Portal</p></header>
+<main>
+<div class="card">
+<h2>Loan Enquiry</h2><p class="note">Complete these details to prepare an enquiry summary. Do not enter sensitive identity information.</p>
+<label>Applicant Name</label><input id="name" placeholder="Enter your name">
+<label>Mobile Number</label><input id="phone" type="tel" placeholder="Enter mobile number">
+<label>Loan Amount</label><select id="amount"><option value="10000">₹10,000</option><option value="20000">₹20,000</option><option value="30000">₹30,000</option><option value="50000">₹50,000</option><option value="75000">₹75,000</option><option value="100000">₹1,00,000</option></select>
+<label>Repayment Tenure</label><select id="months"><option value="3">3 months</option><option value="6">6 months</option><option value="9">9 months</option><option value="12">12 months</option></select>
+<label>Occupation</label><select id="occupation"><option value="">Select occupation</option><option>Self-employed</option><option>Salaried</option><option>Business owner</option><option>Other</option></select>
+<label>Monthly Income (₹)</label><input id="income" type="number" min="1" placeholder="Enter monthly income">
+<button onclick="review()">Review Enquiry</button>
+</div>
+<div class="card" id="result" style="display:none">
+<h2>Enquiry Summary</h2><p>Requested Amount</p><div class="amount" id="showAmount"></div>
+<p id="showTenure"></p><p id="showInterest"></p><p id="showTotal"></p><p id="showEMI"></p>
+<p class="note">Illustrative calculation only. This is not a loan offer, approval, or final repayment quotation.</p>
+<div class="fee"><strong>Proposed Loan Evaluation Fee: ₹350</strong><p class="note">No payment is collected here. Any fee must first be confirmed by the legally responsible lender, with applicable rules and written terms disclosed.</p></div>
+<p class="note">WhatsApp will open with a prepared enquiry. Review it and press Send yourself.</p>
+<a id="whatsappLink" class="whatsapp" href="#" target="_blank" rel="noopener">OPEN WHATSAPP CHAT</a>
+</div>
+<div class="card"><h2>Contact Support</h2><p>Application enquiries: <strong>8240402377</strong></p></div>
+</main>
+<footer>LOANARK · Enquiry prototype<br>Submission does not guarantee loan approval.</footer>
+<script>
+function calculate(){const p=+amount.value,m=+months.value,i=p*.05*m,t=p+i;return{p,m,i,t,e:t/m}}
+function review(){
+ const n=document.getElementById('name').value.trim(),ph=document.getElementById('phone').value.trim(),o=document.getElementById('occupation').value,inc=+document.getElementById('income').value;
+ if(!n||!ph||!o||inc<=0){alert('Please complete all fields.');return}
+ const c=calculate(),money=x=>'₹'+Math.round(x).toLocaleString('en-IN');
+ showAmount.textContent=money(c.p);showTenure.textContent='Tenure: '+c.m+' months';
+ showInterest.textContent='Illustrative interest at 5% monthly flat: '+money(c.i);
+ showTotal.textContent='Illustrative total repayment: '+money(c.t);
+ showEMI.textContent='Illustrative monthly instalment: '+money(c.e);
+ const msg='Hello LOANARK Team,\n\nI would like to enquire about loan evaluation.\n\nApplicant Name: '+n+'\nMobile: '+ph+'\nLoan Amount: '+money(c.p)+'\nTenure: '+c.m+' months\nOccupation: '+o+'\nMonthly Income: '+money(inc)+'\nProposed Evaluation Fee: ₹350\n\nPlease confirm the legally responsible lender details, whether any evaluation fee applies, its written terms and next steps. I understand this is an enquiry, not a loan approval.\n\nThank you.';
+ whatsappLink.href='https://api.whatsapp.com/send?phone=918240402377&text='+encodeURIComponent(msg);
+ result.style.display='block';result.scrollIntoView({behavior:'smooth'});
+}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+</script>
+</body></html>
